@@ -6,7 +6,7 @@ import '../model/model_class.dart';
 
 class PaginationProvider with ChangeNotifier {
   /// List to store the fetched results.
-  List<CategoryDetails> result = [];
+  List<Result> result = [];
 
   /// Boolean to indicate if the initial data is being loaded.
   bool loading = true;
@@ -21,7 +21,7 @@ class PaginationProvider with ChangeNotifier {
   final ScrollController scrollController = ScrollController();
 
   /// Constant string for the API URL.
-  static const String apiUrl = "https://me.w-manage.org/api/app/get-apartment-by-id/1";
+  static const String apiUrl = "https://pokeapi.co/api/v2/pokemon";
   static const String appKey = "base64:7+4+S0ntVJXJgJWh8A1axdkJZuNRGfJZOu2pDL1zloA=";
 
   PaginationProvider() {
@@ -40,19 +40,13 @@ class PaginationProvider with ChangeNotifier {
     _setLoadingState(paraOffset);
 
     try {
-      final response = await http.get(
-        Uri.parse("$apiUrl?page=$paraOffset"),
-        headers: {
-          'APP_KEY': '$appKey',
-          // add json accept
-          'Accept': 'application/json',
-        },
-      );
+      final response = await http.get(Uri.parse("$apiUrl?offset=$paraOffset&limit=15"));
+
       print("print : ${paraOffset}");
       print("Response: ${response.body}");
       if (response.statusCode == 200) {
-        final modelClass = CategoryDetailsModel.fromJson(json.decode(response.body));
-        _updateResults(modelClass.data, paraOffset);
+        final modelClass = ModelClass.fromJson(json.decode(response.body));
+        _updateResults(modelClass.results, paraOffset);
 
       } else {
         throw Exception('Failed to load data');
@@ -85,7 +79,7 @@ class PaginationProvider with ChangeNotifier {
 
   /// Updates the results list with new data.
   /// If offset is 0, it replaces the list, otherwise it appends to the existing list.
-  void _updateResults(List<CategoryDetails> newResults, int paraOffset) {
+  void _updateResults(List<Result> newResults, int paraOffset) {
     if (paraOffset == 1) {
       result = newResults;
     } else {

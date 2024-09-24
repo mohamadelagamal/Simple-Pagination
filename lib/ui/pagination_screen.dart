@@ -34,14 +34,14 @@ class PaginationScreen extends StatelessWidget {
                       return const ShimmerRow();
                     },
                   )
-                : DynamicSliverListView<CategoryDetails>(
+                : DynamicSliverListView<Result>(
                     scrollController: provider.scrollController,
                     items: provider.result,
                     isLoadingMore: provider.loadingMore,
                     itemBuilder: (context, item) {
                       return DynamicCard(
                         name: item.name,
-                        url: item.area.toString(),
+                        url: item.url,
                       );
                     },
                     onRefresh: provider.refresh,
